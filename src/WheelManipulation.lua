@@ -1,6 +1,4 @@
--- by Bayerbua
-
-WheelManipulation = {};
+_G[g_currentModName..".mogliBase"].newClass( "WheelManipulation", "wheelManipulation" )
 
 function WheelManipulation.prerequisitesPresent(specializations)
    return true
@@ -8,11 +6,12 @@ end;
 
 function WheelManipulation:load(xmlFile)
 
+	ComplexSteeringVehicle.registerState( self, "hideTwinWheels",     false, nil, true )
+	ComplexSteeringVehicle.registerState( self, "wheelDoDeformation", false, nil, true )
+
 	-- callbacks for IC control
 	self.wheelManipulation = {}
-	self.wheelManipulation.hideTwinWheels      = false
 	self.wheelManipulation.twinWheelsAreHidden = nil
-	self.wheelManipulation.wheelDoDeformation  = false
 	self.wheelManipulation.wheelDeformation    = 0
 	self.wheelManipulation.wheelDeltaRadius    = Utils.getNoNil( getXMLFloat( xmlFile, "vehicle.wheelDeformation#deltaRadius" ), 0 )
 	self.wheelManipulation.deformationSpeed    = Utils.getNoNil( getXMLFloat( xmlFile, "vehicle.wheelDeformation#timeMs" ), 5000 )
@@ -161,7 +160,7 @@ function WheelManipulation:update(dt)
 		if      self.wheelManipulation.wheelDeltaRadius > 0
 				and InputBinding.WheelDeformation ~= nil			
 				and InputBinding.hasEvent(InputBinding.WheelDeformation) then
-			self.wheelManipulation.wheelDoDeformation = not self.wheelManipulation.wheelDoDeformation
+			WheelManipulation:mbSetState( self, "wheelDoDeformation", not self.wheelManipulation.wheelDoDeformation )
 		end
 	end 
 	
